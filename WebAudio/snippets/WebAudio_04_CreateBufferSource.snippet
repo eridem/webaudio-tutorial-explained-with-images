@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+      <Title>WebAudio_04_CreateBufferSource</Title>
+      <Author>eridem</Author>
+      <Description>
+      </Description>
+      <HelpUrl>
+      </HelpUrl>
+      <Shortcut>
+      </Shortcut>
+    </Header>
+    <Snippet>
+      <Code Language="javascript" Delimiter="$"><![CDATA[// Play sound
+// http://eridem.net/wp-content/uploads/2015/08/WebAudioWithImages_05.png
+function play() {
+    if (!soundBuffer) return;
+
+    // Create AudioBufferSourceNode and attach buffer 
+    var source = context.createBufferSource();
+    source.buffer = soundBuffer;
+
+    // Connect it to the output
+    source.connect(context.destination);
+
+    // Play the source
+    source.start(0);
+}]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Web Audio, by eridem</title>
+</head>
+<body>
+<h1>Web Audio, by ERiDeM</h1>
+<p>Example 5: Visualizations</p>
+<p>Panic documentation: <a href="https://webaudio.github.io/web-audio-api/">https://webaudio.github.io/web-audio-api/</a></p>
+<script>
+    
+    //#region Previous stuff
+
+    // Browser support
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    // Initialize audio context
+    var context = new AudioContext();
+
+    // Sound Url
+    var soundUrl = "/audio/audio04.ogg";
+
+    // Create request to load the song from address
+    var request = new XMLHttpRequest();
+    request.open("GET", soundUrl, true);
+    request.responseType = "arraybuffer";
+
+    //#endregion
+
+    function showVisuals(array) {
+        // Your imagination here
+        console.log(array);
+        // http://localhost/WebAudioExamples/examples/Visualization/
+    }
+
+    // Play sound
+    function play() {
+        if (!soundBuffer) return;
+
+        // Create AudioBufferSourceNode and attach buffer
+        var source = context.createBufferSource();
+        source.buffer = soundBuffer;
+
+        // Create script processor
+        var sourceJs = context.createScriptProcessor(2048, 1, 1);
+
+        // http://eridem.net/wp-content/uploads/2015/08/WebAudioWithImages_12.png
+        // Create analyzer
+        var analyser = context.createAnalyser();
+        analyser.smoothingTimeConstant = 0.6;
+        analyser.fftSize = 512;
+
+        // Create chain [Source -> Analyzer -> SourceJS]
+        source.connect(analyser);
+        analyser.connect(sourceJs);
+
+        // Connect to output (music and script processor)
+        source.connect(context.destination);
+        sourceJs.connect(context.destination);
+
+        // http://eridem.net/wp-content/uploads/2015/08/WebAudioWithImages_13.png
+
+        // Use script processor to obtain info related with the frequency
+        sourceJs.onaudioprocess = function (e) {
+            var array = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(array);
+            if (typeof window.showVisuals === 'function') window.showVisuals(array);
+        };
+    }
+
+    //#region Previous stuff
+
+    // Send request and save it
+    request.onload = function () {
+        context.decodeAudioData(
+            request.response,
+            function (buffer) {
+                window.soundBuffer = buffer;
+                if (typeof window.play === 'function') window.play();
+            }
+        );
+    };
+    request.send();
+
+    //#endregion
+
+</script>
+
+</body>
+</html>
